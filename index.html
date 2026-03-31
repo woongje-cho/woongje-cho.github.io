@@ -730,6 +730,64 @@
             white-space: nowrap;
         }
 
+        .award-cert-link {
+            font-size: 0.8rem;
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .award-cert-link:hover {
+            opacity: 0.75;
+        }
+
+        /* ─── Certificate Modal ─── */
+        .cert-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .cert-modal-overlay.active {
+            display: flex;
+        }
+
+        .cert-modal-overlay img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 12px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .cert-modal-close {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            z-index: 10001;
+        }
+
+        .cert-modal-close:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
         /* ─── Military ─── */
         .military-card {
             background: var(--surface);
@@ -878,6 +936,11 @@
 
             .award-date {
                 margin-left: 0;
+            }
+
+            .award-right {
+                margin-left: 0;
+                text-align: center;
             }
 
             .military-card {
@@ -1184,7 +1247,10 @@
                 <h3>Grand Prize (최우수상)</h3>
                 <p>Phy-AI 26 Hackathon — AI Robotics (Kernel Academy / FastCampus)</p>
             </div>
-            <div class="award-date">Mar 2026</div>
+            <div class="award-right" style="margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:0.3rem;">
+                <div class="award-date" style="margin-left:0;">Mar 2026</div>
+                <a class="award-cert-link" onclick="document.getElementById('certModal').classList.add('active')">View Certificate ↗</a>
+            </div>
         </div>
 
         <div class="award-card animate-on-scroll">
@@ -1267,7 +1333,18 @@
         <p>Last updated: March 2026 · Built with care</p>
     </footer>
 
+    <!-- Certificate Modal -->
+    <div class="cert-modal-overlay" id="certModal" onclick="this.classList.remove('active')">
+        <button class="cert-modal-close" aria-label="Close">&times;</button>
+        <img src="assets/certificate-phyai-2026.png" alt="Phy-AI 26 Hackathon Grand Prize Certificate">
+    </div>
+
     <script>
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') document.getElementById('certModal').classList.remove('active');
+        });
+
         // Intersection Observer for scroll animations
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, index) => {
