@@ -1194,7 +1194,7 @@
             </div>
             <div class="award-right" style="margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:0.3rem;">
                 <div class="award-date" style="margin-left:0;">Mar 2026</div>
-                <a class="award-cert-link" onclick="document.getElementById('certModal').classList.add('active')">View Certificate ↗</a>
+                <a class="award-cert-link" onclick="openCertModal('assets/certificate-phyai-2026.png', 'Phy-AI 26 Grand Prize')">View Certificate ↗</a>
             </div>
         </div>
 
@@ -1203,10 +1203,13 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
             </div>
             <div class="award-info">
-                <h3>Encouragement Award (Top 10)</h3>
+                <h3>Encouragement Award (장려상)</h3>
                 <p>HL FMA Autonomous Driving Competition (aMAP Innovator Championship)</p>
             </div>
-            <div class="award-date">Sep 2025</div>
+            <div class="award-right" style="margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:0.3rem;">
+                <div class="award-date" style="margin-left:0;">Nov 2025</div>
+                <a class="award-cert-link" onclick="openCertModal('assets/certificate-hlfma-2025.png', 'HL FMA 2025 Encouragement Award')">View Certificate ↗</a>
+            </div>
         </div>
     </section>
 
@@ -1418,11 +1421,18 @@
 
     <!-- Certificate Modal -->
     <div class="cert-modal-overlay" id="certModal" onclick="this.classList.remove('active')">
-        <button class="cert-modal-close" aria-label="Close">&times;</button>
-        <img src="assets/certificate-phyai-2026.png" alt="Phy-AI 26 Hackathon Grand Prize Certificate">
+        <button class="cert-modal-close" aria-label="Close" onclick="document.getElementById('certModal').classList.remove('active');event.stopPropagation();">&times;</button>
+        <img id="certModalImg" src="" alt="Certificate">
     </div>
 
     <script>
+        // Certificate modal opener
+        function openCertModal(src, alt) {
+            document.getElementById('certModalImg').src = src;
+            document.getElementById('certModalImg').alt = alt || 'Certificate';
+            document.getElementById('certModal').classList.add('active');
+        }
+
         // Close modal on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') document.getElementById('certModal').classList.remove('active');
