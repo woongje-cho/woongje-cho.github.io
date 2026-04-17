@@ -10,6 +10,71 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
   <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- Sky-blue overrides — inlined to bypass CDN/browser cache -->
+  <style>
+    body { font-family: 'Google Sans', 'Noto Sans', sans-serif; }
+
+    .hero {
+      background: linear-gradient(-45deg, #ecf6ff, #e0f2fe, #dbeafe, #e0f7fa) !important;
+      background-size: 400% 400% !important;
+      animation: gradientShift 18s ease infinite !important;
+      border-bottom: 1px solid #e0f2fe !important;
+    }
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .publication-title {
+      font-weight: 700 !important;
+      background: linear-gradient(90deg, #0369a1, #0284c7, #06b6d4) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      color: transparent !important;
+    }
+
+    .publication-links .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.28);
+    }
+
+    #highlights ul li {
+      padding: 0.75rem 1rem;
+      margin: 0.5rem 0;
+      border-left: 3px solid #0284c7 !important;
+      background: #f0f9ff !important;
+      border-radius: 0 6px 6px 0;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    #highlights ul li:hover {
+      transform: translateX(6px);
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
+      background: #e0f2fe !important;
+    }
+
+    .section h2.title::after {
+      background: linear-gradient(90deg, #0369a1, #06b6d4) !important;
+    }
+
+    .table thead th {
+      background: linear-gradient(90deg, #e0f2fe, #dbeafe) !important;
+    }
+
+    .counter { color: #0284c7 !important; }
+
+    figure.image img {
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    figure.image img:hover {
+      transform: scale(1.015);
+      box-shadow: 0 8px 32px rgba(2,132,199,0.18);
+    }
+  </style>
 </head>
 <body>
 
