@@ -1,683 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KG-AD Scene Understanding — KSAE 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0a0a0b;
-            --surface: #111113;
-            --surface-2: #1a1a1e;
-            --border: #2a2a2f;
-            --text: #e8e6e3;
-            --text-muted: #8a8a8f;
-            --accent: #e05a3a;
-            --accent-glow: rgba(224, 90, 58, 0.15);
-            --accent-subtle: rgba(224, 90, 58, 0.08);
-            --blue: #4a9eff;
-            --blue-subtle: rgba(74, 158, 255, 0.08);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KG-AD: Knowledge Graph-Based Scene Understanding — KSAE 2026</title>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Instrument Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        /* ─── Nav ─── */
-        nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(20px);
-            background: rgba(10,10,11,0.85);
-            border-bottom: 1px solid var(--border);
-        }
-
-        nav .logo a {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1rem;
-            color: var(--text-muted);
-            text-decoration: none;
-        }
-
-        nav .logo a span { color: var(--accent); }
-
-        nav .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-        nav .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.78rem;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            transition: color 0.3s;
-        }
-        nav .nav-links a:hover { color: var(--text); }
-
-        /* ─── Hero ─── */
-        .hero {
-            padding: 8rem 2rem 5rem;
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-            position: relative;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -100px; left: 50%; transform: translateX(-50%);
-            width: 600px; height: 400px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .venue-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent);
-            background: var(--accent-subtle);
-            border: 1px solid rgba(224,90,58,0.25);
-            border-radius: 100px;
-            padding: 0.4rem 1.1rem;
-            margin-bottom: 2rem;
-        }
-
-        .venue-badge::before {
-            content: '';
-            width: 6px; height: 6px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        .paper-title {
-            font-family: 'DM Serif Display', serif;
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            line-height: 1.25;
-            color: var(--text);
-            margin-bottom: 1rem;
-        }
-
-        .paper-title em { color: var(--accent); font-style: italic; }
-
-        .paper-title-kr {
-            font-size: 1.05rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            font-style: italic;
-        }
-
-        .authors {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.5rem 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .author {
-            font-size: 0.95rem;
-            color: var(--text);
-            position: relative;
-        }
-
-        .author.me { color: var(--accent); font-weight: 600; }
-        .author sup { font-size: 0.65rem; vertical-align: super; }
-
-        .affiliations {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 2.5rem;
-        }
-
-        .links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1.4rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.25s;
-            border: 1px solid;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #fff;
-        }
-
-        .btn-primary:hover { background: #c94e30; border-color: #c94e30; transform: translateY(-1px); }
-
-        .btn-outline {
-            background: transparent;
-            border-color: var(--border);
-            color: var(--text);
-        }
-
-        .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
-
-        /* ─── Sections ─── */
-        section {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        .section-label {
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-        }
-
-        .section-title {
-            font-family: 'DM Serif Display', serif;
-            font-size: 2rem;
-            color: var(--text);
-            margin-bottom: 1.5rem;
-        }
-
-        .divider {
-            border: none;
-            border-top: 1px solid var(--border);
-            max-width: 860px;
-            margin: 0 auto;
-        }
-
-        /* ─── Abstract ─── */
-        .abstract-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            line-height: 1.85;
-            color: var(--text);
-            font-size: 0.95rem;
-        }
-
-        /* ─── Stats ─── */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem 1.25rem;
-            text-align: center;
-            transition: border-color 0.3s;
-        }
-
-        .stat-card:hover { border-color: var(--accent); }
-
-        .stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.9rem;
-            font-weight: 500;
-            color: var(--accent);
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        /* ─── Figure ─── */
-        .figure-wrap {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .figure-wrap img {
-            width: 100%;
-            display: block;
-            background: #fff;
-        }
-
-        .figure-caption {
-            padding: 0.85rem 1.25rem;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border);
-        }
-
-        .figure-caption strong { color: var(--text); }
-
-        /* ─── Method pipeline ─── */
-        .pipeline {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.75rem;
-            margin-bottom: 1.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.82rem;
-        }
-
-        .pipeline-row {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.4rem 0;
-            color: var(--text-muted);
-        }
-
-        .pipeline-row .tag {
-            background: var(--accent-subtle);
-            border: 1px solid rgba(224,90,58,0.2);
-            border-radius: 6px;
-            padding: 0.2rem 0.6rem;
-            color: var(--accent);
-            white-space: nowrap;
-            font-size: 0.78rem;
-        }
-
-        .pipeline-row .tag.blue {
-            background: var(--blue-subtle);
-            border-color: rgba(74,158,255,0.2);
-            color: var(--blue);
-        }
-
-        .arrow { color: var(--border); font-size: 1rem; }
-
-        /* ─── Ablation table ─── */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--surface);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            margin-bottom: 1rem;
-        }
-
-        th {
-            background: var(--surface-2);
-            padding: 0.8rem 1rem;
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 0.75rem 1rem;
-            font-size: 0.88rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:last-child td { border-bottom: none; }
-
-        tr.highlight { background: var(--accent-subtle); }
-        tr.highlight td { color: var(--text); font-weight: 600; }
-
-        td.mono { font-family: 'JetBrains Mono', monospace; color: var(--accent); }
-
-        /* ─── BibTeX ─── */
-        .bibtex {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            white-space: pre-wrap;
-            position: relative;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 1rem; right: 1rem;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 0.3rem 0.75rem;
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-        /* ─── Footer ─── */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-        }
-
-        footer a { color: var(--accent); text-decoration: none; }
-
-        @media (max-width: 640px) {
-            .paper-title { font-size: 1.6rem; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            nav .nav-links { display: none; }
-        }
-    </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <link rel="stylesheet" href="static/css/index.css">
 </head>
 <body>
 
-<!-- Nav -->
-<nav>
-    <div class="logo"><a href="/">Woongje <span>Cho</span></a></div>
-    <ul class="nav-links">
-        <li><a href="#abstract">Abstract</a></li>
-        <li><a href="#method">Method</a></li>
-        <li><a href="#results">Results</a></li>
-        <li><a href="#bibtex">BibTeX</a></li>
-    </ul>
+<!-- Navbar -->
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#"><b>KG-AD</b></a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-end">
+      <a class="navbar-item" href="#highlights">Highlights</a>
+      <a class="navbar-item" href="#abstract">Abstract</a>
+      <a class="navbar-item" href="#method">Method</a>
+      <a class="navbar-item" href="#results">Results</a>
+      <a class="navbar-item" href="#bibtex">BibTeX</a>
+    </div>
+  </div>
 </nav>
 
 <!-- Hero -->
-<div class="hero">
-    <div class="venue-badge">KSAE 2026 Spring Conference · Accepted</div>
-
-    <h1 class="paper-title">
-        Knowledge Graph-Based <em>Semantic Scene Understanding</em><br>
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <h1 class="title is-3 publication-title" style="line-height: 1.3;">
+        Knowledge Graph-Based Semantic Scene Understanding<br>
         for Autonomous Driving in Dilemma Situations
-    </h1>
-    <p class="paper-title-kr">딜레마 상황 자율주행을 위한 지식그래프 기반 의미 장면 이해</p>
+      </h1>
+      <p class="subtitle is-6 has-text-grey" style="margin-top: 0.5rem; font-style: italic;">
+        딜레마 상황 자율주행을 위한 지식그래프 기반 의미 장면 이해
+      </p>
 
-    <div class="authors">
-        <span class="author me">Woongje Cho<sup>1</sup></span>
-        <span class="author">Hyeonseo Oh<sup>1</sup></span>
-        <span class="author">Junseok Lee<sup>2</sup></span>
-        <span class="author">Shiho Kim<sup>*3</sup></span>
+      <div class="is-size-5 publication-authors" style="margin-top: 1.25rem;">
+        <span class="author-block">
+          <a href="https://woongje-cho.github.io"><b>Woongje Cho</b></a><sup>1</sup>,
+        </span>
+        <span class="author-block">Hyeonseo Oh<sup>1</sup>,</span>
+        <span class="author-block">Junseok Lee<sup>2</sup>,</span>
+        <span class="author-block">Shiho Kim<sup>*3</sup></span>
+      </div>
+      <div class="is-size-6 publication-authors has-text-grey" style="margin-top: 0.5rem;">
+        <span><sup>1</sup>School of Mechanical Engineering, Yonsei University</span> &nbsp;·&nbsp;
+        <span><sup>2</sup>School of Civil and Environmental Engineering, Yonsei University</span> &nbsp;·&nbsp;
+        <span><sup>3</sup>School of Integrated Technology, Yonsei University</span>
+      </div>
+      <div class="is-size-6 publication-authors" style="margin-top: 0.5rem;">
+        <span><b>KSAE 2026 Spring Conference</b> (한국자동차공학회 춘계학술대회) · Accepted</span>
+      </div>
+
+      <div class="publication-links" style="margin-top: 1.5rem;">
+        <span class="link-block">
+          <a href="KSAE_2026_WJ.pdf" class="button is-dark is-rounded">
+            <span class="icon"><i class="fas fa-file-pdf"></i></span>
+            <span>Paper (PDF)</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a href="https://github.com/woongje-cho/kg-ad-scene-understanding" target="_blank" class="button is-dark is-rounded">
+            <span class="icon"><i class="fab fa-github"></i></span>
+            <span>Code</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a href="https://woongje-cho.github.io" class="button is-light is-rounded">
+            <span class="icon"><i class="fas fa-user"></i></span>
+            <span>Author Page</span>
+          </a>
+        </span>
+      </div>
     </div>
-    <p class="affiliations">
-        <sup>1</sup>School of Mechanical Engineering, Yonsei University &nbsp;·&nbsp;
-        <sup>2</sup>School of Civil and Environmental Engineering, Yonsei University &nbsp;·&nbsp;
-        <sup>3</sup>School of Integrated Technology, Yonsei University
+  </div>
+</section>
+
+<!-- Teaser figure -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <figure class="image">
+      <img src="figures/fig0_architecture.png" alt="Framework Architecture">
+    </figure>
+    <p class="has-text-centered is-size-6 has-text-grey" style="margin-top: 0.75rem;">
+      The proposed KG-enhanced semantic scene understanding framework. Given a scene, the KG represents objects,
+      traffic rules, class hierarchies, and scenario-specific semantic descriptions, enabling richer dilemma reasoning than 3D Scene Graphs.
     </p>
+  </div>
+</section>
 
-    <div class="links">
-        <a href="KSAE_2026_WJ.pdf" class="btn btn-primary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg>
-            Paper (PDF)
-        </a>
-        <a href="https://github.com/woongje-cho/kg-ad-scene-understanding" target="_blank" rel="noopener" class="btn btn-outline">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-            Code (GitHub)
-        </a>
-        <a href="/" class="btn btn-outline">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Author Page
-        </a>
+<!-- Highlights -->
+<section class="section" id="highlights" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Key Contributions</h2>
+    <div class="content">
+      <ul>
+        <li><b>KG-enhanced scene representation</b> — a Knowledge Graph encoding not only spatial structure but also traffic rules, class hierarchies, commonsense context, and scenario-specific rdfs:comment descriptions, enabling structured dilemma reasoning beyond what 3DSGs provide.</li>
+        <li><b>Controlled LLM-as-judge evaluation</b> — 30 scene-understanding queries across 6 cognitive categories, evaluated N=300 times (GPT-4o-mini answering / GPT-4o judging), yielding statistically rigorous comparisons with Wilcoxon signed-rank test and effect size reporting.</li>
+        <li><b>Large performance gain on dilemma reasoning</b> — KG significantly outperforms 3DSG baseline (mean <b><span class="counter" data-target="4.41" data-decimals="2">0.00</span> vs. 3.56</b>, p&lt;0.001, Cohen's d=0.84), with the largest gain in dilemma-specific queries (+1.71).</li>
+        <li><b>5-condition ablation revealing the key driver</b> — systematic ablation (LLM-only → KG-structure → 3DSG → 3DSG+NL → KG full) isolates natural-language rdfs:comment descriptions as the dominant contributor, not ontological structure alone.</li>
+      </ul>
     </div>
-</div>
-
-<hr class="divider">
+  </div>
+</section>
 
 <!-- Abstract -->
-<section id="abstract">
-    <div class="section-label">Abstract</div>
-    <h2 class="section-title">Overview</h2>
-
-    <div class="abstract-box">
-        For autonomous vehicles to operate safely in real-world environments, they must go beyond object detection and understand <strong>semantic relations and situational context</strong> within a scene. In particular, dilemma situations involving conflicting constraints—such as accident avoidance, pedestrian priority, and traffic rule compliance—are difficult to resolve using conventional 3D Scene Graphs (3DSGs), which mainly represent spatial structure.
-        <br><br>
-        To address this limitation, this paper proposes a <strong>Knowledge Graph (KG)-enhanced semantic scene understanding framework</strong> tailored to autonomous driving dilemma scenarios. The proposed KG represents not only objects, attributes, and relations, but also <em>traffic rules, class hierarchies, commonsense context, and scenario-specific semantic descriptions</em> in a structured form.
-        <br><br>
-        We evaluate the framework using <strong>30 scene-understanding queries across six cognitive categories</strong> under a controlled LLM-as-judge setting (GPT-4o-mini for answering, GPT-4o for judging; N=300). Results show that the KG-based method significantly outperforms the 3DSG baseline in reasoning quality (<strong>mean 4.41 vs. 3.56</strong>, Wilcoxon p&lt;0.001, Cohen's d=0.84), with the largest gains in dilemma reasoning (+1.71).
+<section class="section" id="abstract" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Abstract</h2>
+    <div class="content has-text-justified">
+      <p>
+        For autonomous vehicles to operate safely in real-world environments, they must go beyond object
+        detection and understand semantic relations and situational context within a scene. In particular,
+        dilemma situations involving conflicting constraints — such as accident avoidance, pedestrian priority,
+        and traffic rule compliance — are difficult to resolve using conventional 3D Scene Graphs (3DSGs),
+        which mainly represent spatial structure.
+      </p>
+      <p>
+        To address this limitation, this paper proposes a <b>Knowledge Graph (KG)-enhanced semantic scene
+        understanding framework</b> tailored to autonomous driving dilemma scenarios. The proposed KG represents
+        not only objects, attributes, and relations, but also traffic rules, class hierarchies, commonsense
+        context, and scenario-specific semantic descriptions in a structured form.
+      </p>
+      <p>
+        We evaluate the framework using 30 scene-understanding queries across six cognitive categories under
+        a controlled LLM-as-judge setting (GPT-4o-mini for answering, GPT-4o for judging; N=300). Results
+        show that the KG-based method significantly outperforms the 3DSG baseline in reasoning quality
+        (mean <b>4.41 vs. 3.56</b>, Wilcoxon p&lt;0.001, Cohen's d=0.84), with the largest gains in
+        dilemma reasoning (+1.71) while spatial queries confirm design fairness (−0.07). A five-condition
+        ablation study reveals that natural-language semantic descriptions (rdfs:comment) are the dominant
+        contributor to performance.
+      </p>
     </div>
+  </div>
 </section>
-
-<hr class="divider">
-
-<!-- Results at a Glance -->
-<section id="results">
-    <div class="section-label">Results</div>
-    <h2 class="section-title">Key Findings</h2>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <span class="stat-value">4.41</span>
-            <span class="stat-label">KG Score (out of 5)</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-value">3.56</span>
-            <span class="stat-label">3DSG Baseline</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-value">+1.71</span>
-            <span class="stat-label">Dilemma Reasoning Gain</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-value">p&lt;.001</span>
-            <span class="stat-label">Wilcoxon p-value</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-value">0.84</span>
-            <span class="stat-label">Cohen's d (large effect)</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-value">N=300</span>
-            <span class="stat-label">Total Evaluations</span>
-        </div>
-    </div>
-
-    <!-- Category figure -->
-    <div class="figure-wrap">
-        <img src="figures/fig1_category_comparison.png" alt="Category-wise comparison of KG vs 3DSG">
-        <div class="figure-caption">
-            <strong>Figure 1.</strong> Category-wise comparison between KG and 3DSG methods across 6 cognitive categories. The KG method shows the largest gain in dilemma reasoning (+1.71) while spatial queries are comparable (−0.07), confirming design fairness.
-        </div>
-    </div>
-
-    <!-- Ablation table -->
-    <h3 style="font-size:1.1rem; color:var(--text); margin:2rem 0 1rem;">5-Condition Ablation Study</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Condition</th>
-                <th>Mean Score</th>
-                <th>Key Factor</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>LLM-only (no context)</td>
-                <td class="mono">1.25</td>
-                <td style="color:var(--text-muted)">Parametric knowledge only</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>KG structure-only (no NL comments)</td>
-                <td class="mono">3.29</td>
-                <td style="color:var(--text-muted)">Triples without rdfs:comment</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>3DSG baseline</td>
-                <td class="mono">3.56</td>
-                <td style="color:var(--text-muted)">Spatial graph + attributes</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>3DSG + NL descriptions</td>
-                <td class="mono">4.14</td>
-                <td style="color:var(--text-muted)">NL descriptions bridging the gap</td>
-            </tr>
-            <tr class="highlight">
-                <td>5</td>
-                <td>KG full (proposed)</td>
-                <td class="mono">4.41</td>
-                <td>Ontology + NL + domain rules</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- Ablation figure -->
-    <div class="figure-wrap">
-        <img src="figures/fig5_ablation.png" alt="5-condition ablation study results">
-        <div class="figure-caption">
-            <strong>Figure 5.</strong> 5-condition ablation study revealing that natural-language semantic descriptions (rdfs:comment) are the dominant performance contributor. The KG framework's value lies in providing systematic infrastructure for attaching domain-specific annotations.
-        </div>
-    </div>
-
-    <!-- Score distribution -->
-    <div class="figure-wrap">
-        <img src="figures/fig3_score_distribution.png" alt="Score distribution comparison">
-        <div class="figure-caption">
-            <strong>Figure 3.</strong> Score distribution (1–5) across all 300 evaluations. The KG method concentrates scores at 4–5, while 3DSG shows broader distribution with more 3-score responses.
-        </div>
-    </div>
-</section>
-
-<hr class="divider">
 
 <!-- Method -->
-<section id="method">
-    <div class="section-label">Method</div>
-    <h2 class="section-title">Framework</h2>
+<section class="section" id="method" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Method</h2>
 
-    <div class="figure-wrap" style="margin-bottom:1.5rem;">
-        <img src="figures/fig0_architecture.png" alt="Framework architecture">
-        <div class="figure-caption">
-            <strong>Figure 0.</strong> Overview of the proposed KG-enhanced semantic scene understanding framework for autonomous driving dilemma situations.
-        </div>
+    <h3 class="title is-5">Experimental Setup</h3>
+    <div class="content has-text-justified">
+      <p>
+        We construct a controlled dilemma scenario at an urban intersection and compare two retrieval
+        strategies on identical perceptual input — isolating the contribution of structured domain knowledge.
+        Both modes receive the same objects, spatial relations, and observational states; only the knowledge
+        representation differs.
+      </p>
+      <ul>
+        <li><b>KG mode</b>: SPARQL queries over GraphDB <i>DrivingKG</i> (1,498 triples; OWL RDFplus-optimized). Context includes triples, rdfs:comment natural-language descriptions, and ontology class hierarchy.</li>
+        <li><b>3DSG baseline</b>: Graph traversal over <code>scene_graph.json</code> (48 nodes, 23 edges). An enhanced 3DSG with spatial relations, object attributes, and observable states — matching the informationally richer definition from Armeni et al. and Rosinol et al.</li>
+      </ul>
+      <p>Answers generated by GPT-4o-mini (temperature=0.3) and scored by GPT-4o judge (temperature=0.0) on a 1–5 rubric across 6 cognitive categories, repeated 5×/query for variance estimation.</p>
     </div>
 
-    <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.93rem;">
-        We compare two retrieval strategies on identical perceptual input (same objects, spatial relations, and observational states), isolating the contribution of structured domain knowledge.
+    <h3 class="title is-5" style="margin-top: 2rem;">6 Cognitive Query Categories</h3>
+    <div class="table-container">
+      <table class="table is-striped is-fullwidth is-hoverable">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Example Query</th>
+            <th>KG Advantage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Object Recognition</td><td>What vehicles are in the intersection zone?</td><td>Moderate</td></tr>
+          <tr><td>Spatial Relations</td><td>What is behind the ego vehicle?</td><td>Neutral (−0.07)</td></tr>
+          <tr><td>Traffic Rule Compliance</td><td>Is it legal to proceed on yellow?</td><td>Large</td></tr>
+          <tr><td>Safety &amp; Risk Assessment</td><td>What is the highest collision risk?</td><td>Large</td></tr>
+          <tr><td><b>Dilemma Reasoning</b></td><td>What should the ego vehicle do?</td><td><b>+1.71 (largest)</b></td></tr>
+          <tr><td>Commonsense Inference</td><td>Why might the ambulance be prioritized?</td><td>Large</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="title is-5" style="margin-top: 2rem;">Category-wise Comparison</h3>
+    <figure class="image">
+      <img src="figures/fig1_category_comparison.png" alt="Category-wise KG vs 3DSG comparison">
+    </figure>
+    <p class="has-text-centered is-size-6 has-text-grey" style="margin-top: 0.75rem;">
+      Category-wise score comparison. Spatial queries remain comparable (−0.07), validating benchmark fairness.
+      Dilemma reasoning shows the largest gain (+1.71).
     </p>
 
-    <div class="pipeline">
-        <div style="color:var(--text); font-weight:600; margin-bottom:0.75rem; font-family:'Instrument Sans',sans-serif;">KG Mode</div>
-        <div class="pipeline-row">
-            <span class="tag">Query (NL)</span>
-            <span class="arrow">→</span>
-            <span class="tag">SPARQL (GraphDB)</span>
-            <span class="arrow">→</span>
-            <span class="tag">KG Context</span>
-            <span class="arrow">→</span>
-            <span class="tag">GPT-4o-mini</span>
-            <span class="arrow">→</span>
-            <span>Answer</span>
-        </div>
-        <div style="color:var(--text-muted); font-size:0.75rem; margin-top:0.25rem; margin-left:0.5rem;">
-            Triples + rdfs:comment (NL semantic desc.) + ontology hierarchy → GPT-4o judge (1–5 rubric)
-        </div>
-        <div style="color:var(--text); font-weight:600; margin-bottom:0.75rem; margin-top:1.25rem; font-family:'Instrument Sans',sans-serif;">3DSG Baseline Mode</div>
-        <div class="pipeline-row">
-            <span class="tag blue">Query (NL)</span>
-            <span class="arrow">→</span>
-            <span class="tag blue">Graph Traversal</span>
-            <span class="arrow">→</span>
-            <span class="tag blue">3DSG Context</span>
-            <span class="arrow">→</span>
-            <span class="tag blue">GPT-4o-mini</span>
-            <span class="arrow">→</span>
-            <span>Answer</span>
-        </div>
-        <div style="color:var(--text-muted); font-size:0.75rem; margin-top:0.25rem; margin-left:0.5rem;">
-            scene_graph.json (48 nodes, 23 edges, spatial + attributes) → same judge
-        </div>
-    </div>
-
-    <div class="figure-wrap">
-        <img src="figures/fig4_heatmap.png" alt="Performance heatmap by query and condition">
-        <div class="figure-caption">
-            <strong>Figure 4.</strong> Per-query performance heatmap across conditions. Spatial queries show near-parity between KG and 3DSG, validating benchmark fairness, while semantic and dilemma categories show the largest KG advantage.
-        </div>
-    </div>
+    <figure class="image" style="margin-top: 2rem;">
+      <img src="figures/fig2_query_differences.png" alt="Per-query score differences">
+    </figure>
+    <p class="has-text-centered is-size-6 has-text-grey" style="margin-top: 0.75rem;">
+      Per-query score difference (KG − 3DSG). Negative values on spatial queries confirm the 3DSG is a fair, competitive baseline.
+    </p>
+  </div>
 </section>
 
-<hr class="divider">
+<!-- Results -->
+<section class="section" id="results" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Results</h2>
+
+    <h3 class="title is-5">Overall Performance</h3>
+    <div class="table-container">
+      <table class="table is-striped is-fullwidth is-hoverable">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th class="has-text-centered">Mean Score (1–5)</th>
+            <th class="has-text-centered">Δ Dilemma</th>
+            <th class="has-text-centered">p-value</th>
+            <th class="has-text-centered">Cohen's d</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>3DSG Baseline</td>
+            <td class="has-text-centered">3.56</td>
+            <td class="has-text-centered">—</td>
+            <td class="has-text-centered">—</td>
+            <td class="has-text-centered">—</td>
+          </tr>
+          <tr>
+            <td><b>KG (Ours)</b></td>
+            <td class="has-text-centered"><b>4.41</b></td>
+            <td class="has-text-centered"><b>+1.71</b></td>
+            <td class="has-text-centered"><b>&lt;0.001</b></td>
+            <td class="has-text-centered"><b>0.84</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="title is-5" style="margin-top: 2rem;">Score Distribution</h3>
+    <figure class="image">
+      <img src="figures/fig3_score_distribution.png" alt="Score distribution">
+    </figure>
+    <p class="has-text-centered is-size-6 has-text-grey" style="margin-top: 0.75rem;">
+      Score distribution across N=300 evaluations. KG concentrates at scores 4–5; 3DSG shows broader spread.
+    </p>
+
+    <h3 class="title is-5" style="margin-top: 2rem;">Per-Query Heatmap</h3>
+    <figure class="image">
+      <img src="figures/fig4_heatmap.png" alt="Per-query performance heatmap">
+    </figure>
+    <p class="has-text-centered is-size-6 has-text-grey" style="margin-top: 0.75rem;">
+      Per-query score heatmap across all 30 queries and 2 conditions. Warm colors indicate high scores.
+    </p>
+
+    <h3 class="title is-5" style="margin-top: 2rem;">5-Condition Ablation Study</h3>
+    <div class="columns">
+      <div class="column">
+        <div class="table-container">
+          <table class="table is-striped is-fullwidth is-hoverable">
+            <thead>
+              <tr><th>#</th><th>Condition</th><th class="has-text-centered">Mean</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>LLM-only (no context)</td><td class="has-text-centered">1.25</td></tr>
+              <tr><td>2</td><td>KG structure-only</td><td class="has-text-centered">3.29</td></tr>
+              <tr><td>3</td><td>3DSG baseline</td><td class="has-text-centered">3.56</td></tr>
+              <tr><td>4</td><td>3DSG + NL descriptions</td><td class="has-text-centered">4.14</td></tr>
+              <tr><td>5</td><td><b>KG full (ours)</b></td><td class="has-text-centered"><b>4.41</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="column">
+        <figure class="image">
+          <img src="figures/fig5_ablation.png" alt="Ablation study">
+        </figure>
+      </div>
+    </div>
+    <p class="content has-text-justified" style="margin-top: 1rem;">
+      The ablation reveals that <b>natural-language semantic descriptions (rdfs:comment)</b> are the
+      dominant performance contributor — the jump from condition 2 (KG structure-only: 3.29) to
+      condition 5 (KG full: 4.41) is driven primarily by NL annotations, not ontological structure alone.
+      Comparing conditions 3 and 4 (3DSG → 3DSG+NL: +0.58) confirms this: adding NL descriptions
+      to the 3DSG already closes much of the gap.
+    </p>
+  </div>
+</section>
 
 <!-- BibTeX -->
-<section id="bibtex">
-    <div class="section-label">Citation</div>
-    <h2 class="section-title">BibTeX</h2>
-
-    <div class="bibtex" id="bibtex-text">@inproceedings{cho2026kg,
+<section class="section" id="bibtex" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">BibTeX
+      <button onclick="copyBibtex()" class="button is-small is-light" style="margin-left: 1rem; vertical-align: middle;">
+        <span class="icon is-small"><i class="fas fa-copy"></i></span>
+        <span id="copy-label">Copy</span>
+      </button>
+    </h2>
+    <pre id="bibtex-block"><code>@inproceedings{cho2026kg,
   title     = {Knowledge Graph-Based Semantic Scene Understanding
                for Autonomous Driving in Dilemma Situations},
   author    = {Cho, Woongje and Oh, Hyeonseo and Lee, Junseok and Kim, Shiho},
   booktitle = {Proceedings of the KSAE Spring Conference},
   year      = {2026},
   address   = {Seoul, Republic of Korea}
-}
-        <button class="copy-btn" onclick="
-            navigator.clipboard.writeText(document.getElementById('bibtex-text').innerText.replace('Copy','').trim());
-            this.textContent='Copied!';
-            setTimeout(()=>this.textContent='Copy',2000);
-        ">Copy</button></div>
+}</code></pre>
+  </div>
 </section>
 
 <!-- Footer -->
-<footer>
+<footer class="footer">
+  <div class="container has-text-centered content is-small">
     <p>
-        Woongje Cho · Yonsei University Mechanical Engineering ·
-        <a href="mailto:woongje725@yonsei.ac.kr">woongje725@yonsei.ac.kr</a> ·
-        <a href="/">Back to Portfolio</a>
+      Template adapted from
+      <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>,
+      licensed under
+      <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+      &nbsp;·&nbsp;
+      <a href="https://woongje-cho.github.io">Woongje Cho</a>
+      &nbsp;·&nbsp;
+      Yonsei University
     </p>
-    <p style="margin-top:0.5rem; font-size:0.75rem;">KSAE 2026 Spring Conference · May 2026 · Seoul, Republic of Korea</p>
+  </div>
 </footer>
 
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="static/js/index.js"></script>
 </body>
 </html>
