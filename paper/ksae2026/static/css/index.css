@@ -4,10 +4,10 @@ body {
 
 /* Hero — animated gradient background */
 .hero {
-  background: linear-gradient(-45deg, #fef9ec, #fff7e6, #fef3c7, #fff8f0);
+  background: linear-gradient(-45deg, #ecf6ff, #e0f2fe, #dbeafe, #e0f7fa);
   background-size: 400% 400%;
   animation: gradientShift 18s ease infinite;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e0f2fe;
 }
 @keyframes gradientShift {
   0%   { background-position: 0% 50%; }
@@ -18,7 +18,7 @@ body {
 /* Title — gradient text */
 .publication-title {
   font-weight: 700;
-  background: linear-gradient(90deg, #c2410c, #ea580c, #dc2626);
+  background: linear-gradient(90deg, #0369a1, #0284c7, #06b6d4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -43,7 +43,7 @@ body {
 }
 .publication-links .button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(234, 88, 12, 0.25);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.28);
 }
 
 /* Figures */
@@ -54,22 +54,22 @@ figure.image img {
 }
 figure.image img:hover {
   transform: scale(1.015);
-  box-shadow: 0 8px 32px rgba(234, 88, 12, 0.15);
+  box-shadow: 0 8px 32px rgba(2, 132, 199, 0.18);
 }
 
 /* Highlights list */
 #highlights ul li {
   padding: 0.75rem 1rem;
   margin: 0.5rem 0;
-  border-left: 3px solid #ea580c;
-  background: #fffbf5;
+  border-left: 3px solid #0284c7;
+  background: #f0f9ff;
   border-radius: 0 6px 6px 0;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 #highlights ul li:hover {
   transform: translateX(6px);
-  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.12);
-  background: #fff7ed;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
+  background: #e0f2fe;
 }
 
 /* Section headers — animated underline */
@@ -85,7 +85,7 @@ figure.image img:hover {
   bottom: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, #c2410c, #ea580c);
+  background: linear-gradient(90deg, #0369a1, #06b6d4);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.8s ease;
@@ -100,7 +100,7 @@ figure.image img:hover {
   overflow: hidden;
 }
 .table thead th {
-  background: linear-gradient(90deg, #fff7ed, #fef3c7);
+  background: linear-gradient(90deg, #e0f2fe, #dbeafe);
 }
 
 /* BibTeX block */
@@ -119,7 +119,7 @@ pre code {
 
 /* Counter */
 .counter {
-  color: #ea580c;
+  color: #0284c7;
   font-variant-numeric: tabular-nums;
 }
 
