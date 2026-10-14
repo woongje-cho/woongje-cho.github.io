@@ -40,37 +40,71 @@
     intro.hidden = false;
     if (lenis) lenis.stop();
     var done = false;
+    var cleanup = function () {
+      try { sessionStorage.setItem("introSeen", "1"); } catch (e) {}
+      intro.remove();
+      if (lenis) lenis.start();
+    };
+    // Skip / fallback exit: slide the curtain up.
     var finish = function () {
       if (done) return; done = true;
-      try { sessionStorage.setItem("introSeen", "1"); } catch (e) {}
-      gsap.to(intro, { yPercent: -100, duration: 0.7, ease: "power4.inOut", onComplete: function () { intro.remove(); if (lenis) lenis.start(); } });
+      gsap.to(intro, { yPercent: -100, duration: 0.6, ease: "power4.inOut", onComplete: cleanup });
       playHero();
+    };
+    var toast = function (msg, good) {
+      var t = document.createElement("div");
+      t.className = "react-toast " + (good ? "good" : "bad");
+      t.textContent = msg;
+      document.body.appendChild(t);
+      gsap.fromTo(t, { y: 80, rotate: -8, opacity: 0 }, { y: 0, rotate: -3, opacity: 1, duration: 0.5, ease: "back.out(2)" });
+      gsap.to(t, { y: 80, opacity: 0, duration: 0.4, delay: 3.2, onComplete: function () { t.remove(); } });
+    };
+    // Lights out: the car launches left to right and the page is revealed behind it.
+    var carPass = function () {
+      if (done) return; done = true;
+      var car = intro.querySelector(".f1car");
+      var streaks = intro.querySelector(".streaks");
+      var tl = gsap.timeline({ onComplete: cleanup });
+      tl.set(car, { xPercent: 0, x: function () { return -car.offsetWidth - 40; } })
+        .set(streaks, { opacity: 1 })
+        .to(intro.querySelector(".intro-inner"), { x: 18, duration: 0.05, repeat: 5, yoyo: true, ease: "none" }, 0)
+        .to(car, { x: function () { return window.innerWidth + 60; }, duration: 0.85, ease: "power3.in" }, 0.05)
+        .to(car.querySelectorAll(".spin"), { rotation: 1440, transformOrigin: "50% 50%", duration: 0.85, ease: "power3.in" }, 0.05)
+        .fromTo(streaks.children, { scaleX: 0, x: 0 }, { scaleX: 1, x: function () { return window.innerWidth * 0.6; }, duration: 0.7, stagger: 0.04, ease: "power3.in" }, 0.15)
+        .to(intro, { clipPath: "inset(0 0 0 100%)", duration: 0.55, ease: "power3.in" }, 0.45)
+        .call(playHero, null, 0.6);
     };
     intro.querySelector(".skip").addEventListener("click", finish);
     var vid = intro.querySelector("video");
     // F1 start: one column of red pairs per second, a random hold, then all out at once.
     var runLights = function () {
       var cols = intro.querySelectorAll(".gantry .col");
-      var react = intro.querySelector(".react");
       var outAt = 0, armed = true;
       intro.addEventListener("pointerdown", function (e) {
         if (e.target.closest(".skip") || !armed) return;
         armed = false;
-        if (!outAt) { react.textContent = "Jump start! 10-second stop-go penalty 😅"; react.classList.add("bad"); }
-        else { react.textContent = "Your reaction: " + ((performance.now() - outAt) / 1000).toFixed(3) + "s 🏁"; react.classList.add("good"); }
-        gsap.delayedCall(0.9, finish);
+        if (!outAt) {
+          toast("Jump start! 10-second stop-go penalty 😅", false);
+        } else {
+          var sec = (performance.now() - outAt) / 1000;
+          var verdict = sec < 0.2 ? "F1 driver level! 🏎️💨"
+            : sec < 0.3 ? "Pit crew material 🔧"
+            : sec < 0.45 ? "Sunday driver 🚗"
+            : "Turtle mode 🐢 Try again?";
+          toast("Reaction " + sec.toFixed(3) + "s · " + verdict, sec < 0.45);
+        }
       });
       var tl = gsap.timeline();
       tl.from(".intro .brand-mark", { scale: 0.6, opacity: 0, duration: 0.4, ease: "back.out(2)" })
-        .from(".intro .gantry", { y: -80, opacity: 0, duration: 0.5, ease: "back.out(1.6)" }, "<");
+        .from(".intro .gantry", { y: -80, opacity: 0, duration: 0.5, ease: "back.out(1.6)" }, "<")
+        .from(".intro .reflex", { scale: 0, rotate: -20, duration: 0.5, ease: "back.out(2.5)" }, 0.35);
       cols.forEach(function (c, i) { tl.call(function () { c.classList.add("on"); }, null, 0.9 + i * 1.0); });
       var hold = 0.2 + Math.random() * 1.3;
       tl.call(function () {
         cols.forEach(function (c) { c.classList.remove("on"); });
         outAt = performance.now();
+        carPass();
       }, null, 0.9 + 4 * 1.0 + 1.0 + hold);
-      tl.fromTo(".intro .go", { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(3)" }, ">");
-      tl.call(function () { if (armed) { armed = false; finish(); } }, null, "+=1.1");
     };
     if (vid) {
       vid.addEventListener("ended", finish);

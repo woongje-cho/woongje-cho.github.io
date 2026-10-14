@@ -69,7 +69,7 @@ a { color: var(--cobalt); text-underline-offset: 3px; text-decoration-thickness:
 .sticker { position: absolute; z-index: 3; border: var(--stroke); box-shadow: 3px 3px 0 var(--ink); font-family: var(--display); font-weight: 700; cursor: grab; user-select: none; touch-action: none; white-space: nowrap; }
 .sticker:active { cursor: grabbing; }
 .st-neurips { left: -30px; top: 18px; background: var(--cobalt); color: #fff; border-radius: 999px; padding: 10px 16px; transform: rotate(-9deg); }
-.st-yax { right: -34px; bottom: -14px; width: 120px; height: 120px; border-radius: 50%; background: var(--mint); display: grid; place-items: center; text-align: center; white-space: normal; line-height: 1.1; transform: rotate(12deg); }
+.st-yax { right: -8px; bottom: -14px; width: 120px; height: 120px; border-radius: 50%; background: var(--mint); display: grid; place-items: center; text-align: center; white-space: normal; line-height: 1.1; transform: rotate(12deg); }
 .st-jsa { left: 0; bottom: 6px; background: var(--orange); color: #fff; border-radius: 12px; padding: 8px 14px; transform: rotate(-5deg); }
 .st-star { right: 30px; top: -18px; background: var(--yellow); border-radius: 50%; width: 64px; height: 64px; display: grid; place-items: center; font-size: 1.8rem; transform: rotate(14deg); }
 .drag-hint { position: absolute; right: 0; bottom: -34px; font-size: .85rem; color: var(--soft); font-weight: 600; }
@@ -277,3 +277,23 @@ html.lenis, html.lenis body { height: auto; }
 .paper-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .paper-links .btn { padding: 8px 14px; font-size: .9rem; }
 .cert { margin-left: 8px; font-weight: 700; font-size: .85rem; }
+
+/* Intro car pass */
+.intro { overflow: hidden; clip-path: inset(0 0 0 0); }
+.f1car { position: absolute; left: 0; bottom: 5vh; width: min(420px, 66vw); height: auto; transform: translateX(-120vw); z-index: 3; filter: drop-shadow(0 14px 10px rgba(0,0,0,.45)); }
+.streaks { position: absolute; left: 0; right: 0; bottom: 9vh; height: 120px; opacity: 0; z-index: 2; pointer-events: none; }
+.streaks i { position: absolute; left: -10vw; height: 4px; width: 60vw; border-radius: 2px; transform-origin: left center; transform: scaleX(0); background: linear-gradient(90deg, transparent, rgba(255,210,63,.9)); }
+.streaks i:nth-child(1) { top: 10%; } .streaks i:nth-child(2) { top: 28%; width: 45vw; background: linear-gradient(90deg, transparent, rgba(255,90,31,.9)); }
+.streaks i:nth-child(3) { top: 46%; width: 70vw; } .streaks i:nth-child(4) { top: 62%; width: 40vw; background: linear-gradient(90deg, transparent, rgba(255,255,255,.8)); }
+.streaks i:nth-child(5) { top: 78%; width: 55vw; } .streaks i:nth-child(6) { top: 92%; width: 35vw; background: linear-gradient(90deg, transparent, rgba(255,90,31,.9)); }
+.react-toast { position: fixed; left: 20px; bottom: 20px; z-index: 120; font-weight: 800; padding: 10px 16px; border: var(--stroke); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); background: var(--mint); color: var(--ink); }
+.react-toast.bad { background: var(--orange); color: #fff; }
+
+/* Ferrari-red streaks for the car pass */
+.streaks i { background: linear-gradient(90deg, transparent, rgba(216,26,42,.95)); }
+.streaks i:nth-child(2n) { background: linear-gradient(90deg, transparent, rgba(255,255,255,.85)); }
+
+.site-footer .credit { opacity: .7; margin-left: 8px; font-weight: 500; }
+
+.reflex { display: inline-block; background: var(--yellow); color: var(--ink); font-weight: 800; font-size: clamp(.9rem, 2.4vw, 1.1rem); padding: 6px 14px; border: 3px solid var(--cream); border-radius: 12px; transform: rotate(2deg); box-shadow: 4px 4px 0 var(--orange); text-align: center; max-width: 90vw; }
+
