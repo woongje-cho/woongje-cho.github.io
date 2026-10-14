@@ -298,23 +298,6 @@ html.lenis, html.lenis body { height: auto; }
 .reflex { display: inline-block; background: var(--yellow); color: var(--ink); font-weight: 800; font-size: clamp(.9rem, 2.4vw, 1.1rem); padding: 6px 14px; border: 3px solid var(--cream); border-radius: 12px; transform: rotate(2deg); box-shadow: 4px 4px 0 var(--orange); text-align: center; max-width: 90vw; }
 
 
-/* Floating F1 stickers in the side gutters (wide screens only) */
-.floaties { display: none; }
-@media (min-width: 1320px) {
-  .floaties { display: block; position: fixed; inset: 0; pointer-events: none; z-index: 1; }
-  .floaty { position: absolute; top: var(--top); width: 68px; height: 68px; border-radius: 50%; background: #fff; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); display: grid; place-items: center; transform: rotate(var(--rot)); }
-  .floaty.left { left: calc((100vw - var(--wrap)) / 4 - 34px + var(--dx)); }
-  .floaty.right { right: calc((100vw - var(--wrap)) / 4 - 34px + var(--dx)); }
-  .floaty img { width: 40px; height: 40px; }
-  .floaty:nth-child(3n) { background: var(--yellow); }
-  .floaty:nth-child(4n+1) { background: var(--mint); }
-  @media (prefers-reduced-motion: no-preference) {
-    .floaty img { animation: bob var(--dur) ease-in-out var(--delay) infinite; }
-  }
-  main, .site-footer { position: relative; z-index: 2; }
-}
-@keyframes bob { 0%, 100% { transform: translateY(-6px) rotate(-6deg); } 50% { transform: translateY(6px) rotate(6deg); } }
-
 /* ---- Responsive pass (portrait / landscape / wide) ---- */
 @media (max-width: 960px) {
   .plate { width: min(260px, 72vw); }

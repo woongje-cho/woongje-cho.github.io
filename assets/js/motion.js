@@ -216,11 +216,5 @@
   gsap.to(".big-star", { rotate: 200, ease: "none", scrollTrigger: { trigger: ".contact", start: "top bottom", end: "bottom top", scrub: true } });
   gsap.from(".contact h2", { scale: 0.6, opacity: 0, duration: 0.8, ease: "back.out(2)", scrollTrigger: { trigger: ".contact", start: "top 70%" } });
 
-  // 10. Floating gutter stickers drift at different speeds while scrolling.
-  gsap.utils.toArray(".floaty").forEach(function (f, i) {
-    gsap.to(f, { y: (i % 2 ? -1 : 1) * (60 + (i % 4) * 40), ease: "none",
-      scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 1 } });
-  });
-
   window.addEventListener("load", function () { ScrollTrigger.refresh(); });
 })();
