@@ -28,7 +28,7 @@
     gsap.from(".hero h1", { y: 60, opacity: 0, duration: 0.9, ease: "back.out(1.6)" });
     gsap.from(".hero .hello, .hero .lead, .hero .actions", { y: 24, opacity: 0, duration: 0.7, stagger: 0.08, delay: 0.25 });
     gsap.from(".plate", { y: 80, rotate: 18, opacity: 0, duration: 1, ease: "back.out(1.4)", delay: 0.2 });
-    gsap.from(".sticker", { scale: 0, rotate: -40, duration: 0.6, stagger: 0.12, delay: 0.7, ease: "back.out(2.2)" });
+    gsap.from(".sticker", { scale: 0, duration: 0.6, stagger: 0.12, delay: 0.7, ease: "back.out(2.2)" });
   }
   var intro = document.querySelector(".intro");
   var seen = false;
@@ -120,11 +120,11 @@
   mm.add("(min-width: 961px)", function () {
     var tl = gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.6 } });
     tl.to(".hero h1", { scale: 0.82, y: -40, transformOrigin: "left top", ease: "none" }, 0)
-      .to(".plate", { y: -120, rotate: -6, ease: "none" }, 0)
-      .to(".st-neurips", { x: -140, y: -160, rotate: -40, ease: "none" }, 0)
-      .to(".st-yax", { x: 160, y: -60, rotate: 90, ease: "none" }, 0)
-      .to(".st-jsa", { x: -80, y: 120, rotate: 20, ease: "none" }, 0)
-      .to(".st-star", { x: 120, y: -200, rotate: 360, ease: "none" }, 0);
+      .to(".plate", { y: -120, rotation: "-=10", ease: "none" }, 0)
+      .to(".st-neurips", { x: -140, y: -160, rotation: "-=30", ease: "none" }, 0)
+      .to(".st-yax", { x: 160, y: -60, rotation: "+=80", ease: "none" }, 0)
+      .to(".st-jsa", { x: -80, y: 120, rotation: "+=25", ease: "none" }, 0)
+      .to(".st-star", { x: 120, y: -200, rotation: "+=360", ease: "none" }, 0);
   });
 
   // 2. Tape: speed follows scroll velocity.
@@ -183,7 +183,7 @@
   });
 
   // 7. Projects: pinned horizontal gallery on desktop.
-  mm.add("(min-width: 961px)", function () {
+  mm.add("(min-width: 961px) and (min-height: 641px)", function () {
     var section = document.querySelector("#projects");
     var board = document.querySelector(".board");
     if (!section || !board) return;
@@ -199,7 +199,7 @@
     });
     return function () { board.classList.remove("is-h"); gsap.set(board, { clearProps: "x" }); };
   });
-  mm.add("(max-width: 960px)", function () {
+  mm.add("(max-width: 960px), (max-height: 640px)", function () {
     gsap.utils.toArray(".board .polaroid").forEach(function (card) {
       gsap.from(card, { y: 60, opacity: 0, duration: 0.7, scrollTrigger: { trigger: card, start: "top 90%" } });
     });
@@ -215,6 +215,12 @@
   // 9. Contact: star spins with scroll, title punches in.
   gsap.to(".big-star", { rotate: 200, ease: "none", scrollTrigger: { trigger: ".contact", start: "top bottom", end: "bottom top", scrub: true } });
   gsap.from(".contact h2", { scale: 0.6, opacity: 0, duration: 0.8, ease: "back.out(2)", scrollTrigger: { trigger: ".contact", start: "top 70%" } });
+
+  // 10. Floating gutter stickers drift at different speeds while scrolling.
+  gsap.utils.toArray(".floaty").forEach(function (f, i) {
+    gsap.to(f, { y: (i % 2 ? -1 : 1) * (60 + (i % 4) * 40), ease: "none",
+      scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 1 } });
+  });
 
   window.addEventListener("load", function () { ScrollTrigger.refresh(); });
 })();

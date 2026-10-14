@@ -69,10 +69,10 @@ a { color: var(--cobalt); text-underline-offset: 3px; text-decoration-thickness:
 .sticker { position: absolute; z-index: 3; border: var(--stroke); box-shadow: 3px 3px 0 var(--ink); font-family: var(--display); font-weight: 700; cursor: grab; user-select: none; touch-action: none; white-space: nowrap; }
 .sticker:active { cursor: grabbing; }
 .st-neurips { left: -30px; top: 18px; background: var(--cobalt); color: #fff; border-radius: 999px; padding: 10px 16px; transform: rotate(-9deg); }
-.st-yax { right: -8px; bottom: -14px; width: 120px; height: 120px; border-radius: 50%; background: var(--mint); display: grid; place-items: center; text-align: center; white-space: normal; line-height: 1.1; transform: rotate(12deg); }
-.st-jsa { left: 0; bottom: 6px; background: var(--orange); color: #fff; border-radius: 12px; padding: 8px 14px; transform: rotate(-5deg); }
+.st-yax { right: -14px; bottom: -58px; width: 120px; height: 120px; border-radius: 50%; background: var(--mint); display: grid; place-items: center; text-align: center; white-space: normal; line-height: 1.1; transform: rotate(12deg); }
+.st-jsa { left: -18px; bottom: -34px; background: var(--orange); color: #fff; border-radius: 12px; padding: 8px 14px; transform: rotate(-5deg); }
 .st-star { right: 30px; top: -18px; background: var(--yellow); border-radius: 50%; width: 64px; height: 64px; display: grid; place-items: center; font-size: 1.8rem; transform: rotate(14deg); }
-.drag-hint { position: absolute; right: 0; bottom: -34px; font-size: .85rem; color: var(--soft); font-weight: 600; }
+.drag-hint { position: absolute; left: 0; bottom: -70px; font-size: .85rem; color: var(--soft); font-weight: 600; }
 
 /* Image slots (filled automatically when the file exists) */
 .slot { display: grid; place-items: center; text-align: center; border: 2px dashed var(--ink); border-radius: 14px; background: repeating-linear-gradient(135deg, #fff3dc 0 10px, #ffeccc 10px 20px); color: var(--soft); font-size: .78rem; font-weight: 600; aspect-ratio: 4 / 3; padding: 8px; overflow: hidden; }
@@ -297,3 +297,45 @@ html.lenis, html.lenis body { height: auto; }
 
 .reflex { display: inline-block; background: var(--yellow); color: var(--ink); font-weight: 800; font-size: clamp(.9rem, 2.4vw, 1.1rem); padding: 6px 14px; border: 3px solid var(--cream); border-radius: 12px; transform: rotate(2deg); box-shadow: 4px 4px 0 var(--orange); text-align: center; max-width: 90vw; }
 
+
+/* Floating F1 stickers in the side gutters (wide screens only) */
+.floaties { display: none; }
+@media (min-width: 1320px) {
+  .floaties { display: block; position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+  .floaty { position: absolute; top: var(--top); width: 68px; height: 68px; border-radius: 50%; background: #fff; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); display: grid; place-items: center; transform: rotate(var(--rot)); }
+  .floaty.left { left: calc((100vw - var(--wrap)) / 4 - 34px + var(--dx)); }
+  .floaty.right { right: calc((100vw - var(--wrap)) / 4 - 34px + var(--dx)); }
+  .floaty img { width: 40px; height: 40px; }
+  .floaty:nth-child(3n) { background: var(--yellow); }
+  .floaty:nth-child(4n+1) { background: var(--mint); }
+  @media (prefers-reduced-motion: no-preference) {
+    .floaty img { animation: bob var(--dur) ease-in-out var(--delay) infinite; }
+  }
+  main, .site-footer { position: relative; z-index: 2; }
+}
+@keyframes bob { 0%, 100% { transform: translateY(-6px) rotate(-6deg); } 50% { transform: translateY(6px) rotate(6deg); } }
+
+/* ---- Responsive pass (portrait / landscape / wide) ---- */
+@media (max-width: 960px) {
+  .plate { width: min(260px, 72vw); }
+  .st-star { display: none; }
+  .st-neurips { left: 2%; top: -6px; }
+  .st-jsa { left: 2%; bottom: 18px; }
+  .st-yax { right: 2%; bottom: 0; width: 104px; height: 104px; font-size: .95rem; }
+}
+@media (max-width: 640px) {
+  .tower li { grid-template-columns: 64px 6px 1fr; gap: 12px; padding: 12px 14px; }
+  .tower .pos { font-size: .85rem; }
+}
+/* Short landscape screens (phones turned sideways, small laptops) */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero { padding: 28px 0 40px; }
+  .hero h1 { font-size: clamp(2.4rem, 7vw, 4rem); }
+  .intro-inner { gap: 12px; transform: scale(.78); }
+  .gantry i { width: 26px; }
+  .f1car { width: min(300px, 40vw); bottom: 2vh; }
+}
+/* Pinned horizontal gallery needs enough height; fall back to the stacked board otherwise */
+@media (min-width: 961px) and (max-height: 640px) {
+  .motion #projects { min-height: 0; display: block; }
+}
